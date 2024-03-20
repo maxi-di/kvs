@@ -4,7 +4,6 @@ GITREV=$(shell git describe --abbrev=7 --always --tags --dirty)
 REV=$(GITREV)-$(BRANCH)-$(shell date +%Y%m%d-%H:%M:%S)
 
 BIN_NAME=kvs
-VERSION=v0.1
 
 LDFLAGS="-X main.revision=$(REV) -s -w"
 

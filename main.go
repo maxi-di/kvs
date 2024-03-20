@@ -52,6 +52,7 @@ func main() {
 	rootCmd.AddCommand(cmd.NewRemoveDBCmd(props))
 	rootCmd.AddCommand(cmd.NewInsertCmd(props))
 	rootCmd.AddCommand(cmd.NewGetCmd(props))
+	rootCmd.AddCommand(cmd.NewRemoveCmd(props))
 
 	rootCmd.Execute()
 }

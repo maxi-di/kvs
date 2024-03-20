@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -36,7 +36,7 @@ func NewJSONStorage(location string, logger *logrus.Logger) (*JSONStorage, error
 }
 
 func (s *JSONStorage) ListDB() []string {
-	return findFiles(s.location, ".json")
+	return findFiles(s.location, "")
 }
 
 func fromJSON(dbLocation string) ([]StorageRecord, error) {
@@ -77,11 +77,20 @@ func (s *JSONStorage) GetValue(db, key string) (string, error) {
 	return "", nil
 }
 
+func (s *JSONStorage) existDB(db string) error {
+	_, err := os.Open(path.Join(s.location, db))
+	return err
+}
+
 func (s *JSONStorage) Insert(db, key, value string) error {
+	if err := s.existDB(db); err != nil {
+		return err
+	}
+
 	targets, _ := fromJSON(path.Join(s.location, db))
 
 	targets = append(targets, StorageRecord{Key: key, Value: value})
-	txt, err := json.Marshal(targets)
+	txt, err := json.MarshalIndent(targets, "", "    ")
 	if err != nil {
 		return err
 	}
@@ -93,8 +102,11 @@ func (s *JSONStorage) Insert(db, key, value string) error {
 	return nil
 }
 
-func (s *JSONStorage) NewDB(name string) error {
-	_, err := os.Create(path.Join(s.location, name))
+func (s *JSONStorage) NewDB(db string) error {
+	if err := s.existDB(db); err == nil {
+		return fmt.Errorf("db already exists")
+	}
+	_, err := os.Create(path.Join(s.location, db))
 	return err
 }
 
@@ -110,7 +122,7 @@ func findFiles(dir string, pattern string) []string {
 	var a []string
 	fileInfos, _ := os.ReadDir(dir)
 	for _, v := range fileInfos {
-		if !v.IsDir() && filepath.Ext(v.Name()) == pattern {
+		if !v.IsDir() && strings.Contains(v.Name(), pattern) {
 			a = append(a, v.Name())
 		}
 	}
