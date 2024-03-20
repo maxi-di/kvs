@@ -55,7 +55,7 @@ func fromJSON(dbLocation string) ([]StorageRecord, error) {
 func (s *JSONStorage) GetKeys(db string) ([]string, error) {
 	targets, err := fromJSON(path.Join(s.location, db))
 	if err != nil {
-		return nil, err
+		return []string{}, nil
 	}
 	result := make([]string, 0)
 	for _, v := range targets {
@@ -67,14 +67,13 @@ func (s *JSONStorage) GetKeys(db string) ([]string, error) {
 func (s *JSONStorage) GetValue(db, key string) (string, error) {
 	targets, err := fromJSON(path.Join(s.location, db))
 	if err != nil {
+		return "", nil
+	}
+	record, err := getStorageRecord(targets, key)
+	if err != nil {
 		return "", err
 	}
-	for _, v := range targets {
-		if v.Key == key {
-			return v.Value, nil
-		}
-	}
-	return "", nil
+	return record.Value, nil
 }
 
 func (s *JSONStorage) existDB(db string) error {
@@ -98,7 +97,6 @@ func (s *JSONStorage) Insert(db, key, value string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(db, key, value)
 	return nil
 }
 

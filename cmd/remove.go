@@ -11,24 +11,24 @@ func NewRemoveCmd(props *Props) *cobra.Command {
 		Use:   "remove",
 		Short: "!!!!! TO DO remove Value from DB by Key",
 		Run: func(cmd *cobra.Command, args []string) {
-			// var err error
+			// dbName = selectDB(dbName, props.storage.ListDB(), props.logger)
 			// if dbName == "" {
-			// 	dbName, err = fuzzy(props.storage.ListDB(), "Выберите базу данных")
-			// 	if err != nil {
-			// 		props.logger.Fatal(err)
-			// 	}
+			// 	return
 			// }
-			// props.logger.Infof("getting from %s", dbName)
+			// props.logger.Infof("removing from bd '%s'", dbName)
 
 			// if key == "" {
 			// 	keys, err := props.storage.GetKeys(dbName)
 			// 	if err != nil {
 			// 		props.logger.Fatal(err)
 			// 	}
-			// 	key, err = fuzzy(keys, "Выберите значение")
+			// 	key, _, err = fuzzy(keys, "Что удаляем?")
 			// 	if err != nil {
 			// 		props.logger.Fatal(err)
 			// 	}
+			// }
+			// if key == "" {
+			// 	return
 			// }
 
 			// value, err := props.storage.GetValue(dbName, key)

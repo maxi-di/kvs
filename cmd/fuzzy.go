@@ -4,7 +4,10 @@ import (
 	"github.com/ktr0731/go-fuzzyfinder"
 )
 
-func fuzzy(s []string, header string) (string, error) {
+func fuzzy(s []string, header string) (string, int, error) {
+	if len(s) == 0 {
+		return "", -1, nil
+	}
 	idx, err := fuzzyfinder.Find(
 		s,
 		func(i int) string {
@@ -13,7 +16,7 @@ func fuzzy(s []string, header string) (string, error) {
 		fuzzyfinder.WithHeader(header),
 	)
 	if err != nil {
-		return "", err
+		return "", -1, err
 	}
-	return s[idx], nil
+	return s[idx], idx, nil
 }

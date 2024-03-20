@@ -60,7 +60,7 @@ func main() {
 func initLogger(level logrus.Level) *logrus.Logger {
 
 	logger := logrus.New()
-	logger.SetOutput(os.Stdout)
+	logger.SetOutput(os.Stderr)
 	logger.ReportCaller = true
 	logger.Formatter = &logrus.TextFormatter{
 		CallerPrettyfier: func(f *runtime.Frame) (function string, file string) {
