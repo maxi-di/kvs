@@ -23,9 +23,10 @@ func NewJSONStorage(location string, logger *logrus.Logger) (*JSONStorage, error
 			return nil, fmt.Errorf("can't get user home dir")
 		}
 		location = path.Join(homeDir, ".local", "share", "kvs")
-		if err := os.MkdirAll(location, 0755); err != nil {
-			return nil, fmt.Errorf("can't create '%s' dir", location)
-		}
+	}
+
+	if err := os.MkdirAll(location, 0755); err != nil {
+		return nil, fmt.Errorf("can't create '%s' dir", location)
 	}
 
 	j := &JSONStorage{
