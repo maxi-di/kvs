@@ -14,18 +14,15 @@ func NewGetCmd(props *Props) *cobra.Command {
 		Use:   "get",
 		Short: "get Value from DB by Key",
 		Run: func(cmd *cobra.Command, args []string) {
-			dbName = selectDB(dbName, props.storage.ListDB(), props.logger)
-			if dbName == "" {
-				return
+			err := openDB(props.storage, dbName)
+			if err != nil {
+				props.logger.Fatal(err)
 			}
-			props.logger.Infof("getting from bd '%s'", dbName)
+			props.logger.Infof("getting from db '%s'", dbName)
 
 			if key == "" {
-				keys, err := props.storage.GetKeys(dbName)
-				if err != nil {
-					props.logger.Fatal(err)
-				}
-				key, _, err = fuzzy(keys, "Выберите значение")
+				keys := props.storage.GetKeys()
+				key, _, err = fuzzy(keys, "Choose value")
 				if err != nil {
 					props.logger.Fatal(err)
 				}
@@ -35,7 +32,7 @@ func NewGetCmd(props *Props) *cobra.Command {
 				return
 			}
 
-			value, err := props.storage.GetValue(dbName, key)
+			value, err := props.storage.GetValue(key)
 			if err != nil {
 				props.logger.Fatal(err)
 			}

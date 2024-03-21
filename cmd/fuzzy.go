@@ -1,12 +1,14 @@
 package cmd
 
 import (
+	"errors"
+
 	"github.com/ktr0731/go-fuzzyfinder"
 )
 
 func fuzzy(s []string, header string) (string, int, error) {
 	if len(s) == 0 {
-		return "", -1, nil
+		return "", -1, errors.New("elements for fuzzy not specified")
 	}
 	idx, err := fuzzyfinder.Find(
 		s,
