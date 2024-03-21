@@ -1,27 +1,33 @@
 package cmd
 
-import "github.com/sirupsen/logrus"
+import (
+	"errors"
+	"kvs/kvs"
+)
 
-func selectDB(dbName string, all []string, logger *logrus.Logger) string {
+func openDB(db kvs.Storage, name string) error {
+
 	var err error
 
-	if dbName != "" {
-		return dbName
+	if name == "" {
+		all := db.ListDB()
+		if len(all) == 0 {
+			return errors.New("no one db's")
+		}
+		name, _, err = fuzzy(all, "Choose DB from list")
+		if err != nil {
+			return err
+		}
 	}
 
-	if len(all) == 0 {
-		logger.Warn("no one db's")
-		return ""
+	if name == "" {
+		return errors.New("no db specified")
 	}
 
-	dbName, _, err = fuzzy(all, "Выберите базу данных")
+	err = db.Open(name)
 	if err != nil {
-		logger.Fatal(err)
+		return err
 	}
 
-	if dbName == "" {
-		logger.Warn("no db specified")
-	}
-
-	return dbName
+	return nil
 }

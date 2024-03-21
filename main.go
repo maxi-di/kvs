@@ -29,7 +29,8 @@ func main() {
 	logger = initLogger(logrus.PanicLevel)
 
 	rootCmd := &cobra.Command{
-		Use: appName,
+		Use:  appName,
+		Long: "Key value storage",
 		Run: func(c *cobra.Command, args []string) {
 		},
 		PersistentPreRun: func(c *cobra.Command, args []string) {

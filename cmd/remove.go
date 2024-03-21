@@ -9,33 +9,29 @@ func NewRemoveCmd(props *Props) *cobra.Command {
 	key := ""
 	c := &cobra.Command{
 		Use:   "remove",
-		Short: "!!!!! TO DO remove Value from DB by Key",
+		Short: "remove record from DB",
 		Run: func(cmd *cobra.Command, args []string) {
-			// dbName = selectDB(dbName, props.storage.ListDB(), props.logger)
-			// if dbName == "" {
-			// 	return
-			// }
-			// props.logger.Infof("removing from bd '%s'", dbName)
+			err := openDB(props.storage, dbName)
+			if err != nil {
+				props.logger.Fatal(err)
+			}
+			props.logger.Infof("removing from db '%s'", dbName)
 
-			// if key == "" {
-			// 	keys, err := props.storage.GetKeys(dbName)
-			// 	if err != nil {
-			// 		props.logger.Fatal(err)
-			// 	}
-			// 	key, _, err = fuzzy(keys, "Что удаляем?")
-			// 	if err != nil {
-			// 		props.logger.Fatal(err)
-			// 	}
-			// }
-			// if key == "" {
-			// 	return
-			// }
+			if key == "" {
+				keys := props.storage.GetKeys()
+				key, _, err = fuzzy(keys, "Select for delete...")
+				if err != nil {
+					props.logger.Fatal(err)
+				}
+			}
+			if key == "" {
+				return
+			}
 
-			// value, err := props.storage.GetValue(dbName, key)
-			// if err != nil {
-			// 	props.logger.Fatal(err)
-			// }
-			// fmt.Println(value)
+			err = props.storage.RemoveValue(key)
+			if err != nil {
+				props.logger.Fatal(err)
+			}
 		},
 	}
 	c.Flags().StringVar(&dbName, "db", "", "db name (with ext)")
