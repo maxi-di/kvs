@@ -10,33 +10,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type JSONStorage struct {
+type FileStorage struct {
 	location string
 	logger   *logrus.Logger
 }
 
-func NewJSONStorage(location string, logger *logrus.Logger) (*JSONStorage, error) {
-
-	if location == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return nil, fmt.Errorf("can't get user home dir")
-		}
-		location = path.Join(homeDir, ".local", "share", "kvs")
-	}
+func NewFileStorage(location string, logger *logrus.Logger) (*FileStorage, error) {
 
 	if err := os.MkdirAll(location, 0755); err != nil {
-		return nil, fmt.Errorf("can't create '%s' dir", location)
+		logger.Fatalf("can't create '%s' dir", location)
 	}
 
-	j := &JSONStorage{
+	j := &FileStorage{
 		location: location,
 		logger:   logger,
 	}
 	return j, nil
 }
 
-func (s *JSONStorage) ListDB() []string {
+func (s *FileStorage) ListDB() []string {
 	return findFiles(s.location, "")
 }
 
@@ -53,7 +45,7 @@ func fromJSON(dbLocation string) ([]StorageRecord, error) {
 	return targets, nil
 }
 
-func (s *JSONStorage) GetKeys(db string) ([]string, error) {
+func (s *FileStorage) GetKeys(db string) ([]string, error) {
 	targets, err := fromJSON(path.Join(s.location, db))
 	if err != nil {
 		return []string{}, nil
@@ -65,7 +57,7 @@ func (s *JSONStorage) GetKeys(db string) ([]string, error) {
 	return result, nil
 }
 
-func (s *JSONStorage) GetValue(db, key string) (string, error) {
+func (s *FileStorage) GetValue(db, key string) (string, error) {
 	targets, err := fromJSON(path.Join(s.location, db))
 	if err != nil {
 		return "", nil
@@ -77,15 +69,12 @@ func (s *JSONStorage) GetValue(db, key string) (string, error) {
 	return record.Value, nil
 }
 
-func (s *JSONStorage) existDB(db string) error {
+func (s *FileStorage) existDB(db string) bool {
 	_, err := os.Open(path.Join(s.location, db))
-	return err
+	return err == nil
 }
 
-func (s *JSONStorage) Insert(db, key, value string) error {
-	if err := s.existDB(db); err != nil {
-		return err
-	}
+func (s *FileStorage) Insert(db, key, value string) error {
 
 	targets, _ := fromJSON(path.Join(s.location, db))
 
@@ -101,19 +90,23 @@ func (s *JSONStorage) Insert(db, key, value string) error {
 	return nil
 }
 
-func (s *JSONStorage) NewDB(db string) error {
-	if err := s.existDB(db); err == nil {
+func (s *FileStorage) makeDBName(db string) string {
+	return path.Join(s.location, db)
+}
+
+func (s *FileStorage) NewDB(db string) error {
+	if s.existDB(db) {
 		return fmt.Errorf("db already exists")
 	}
-	_, err := os.Create(path.Join(s.location, db))
+	_, err := os.Create(s.makeDBName(db))
 	return err
 }
 
-func (s *JSONStorage) RemoveDB(name string) error {
+func (s *FileStorage) RemoveDB(name string) error {
 	return os.Remove(path.Join(s.location, name))
 }
 
-func (s *JSONStorage) Name() string {
+func (s *FileStorage) Name() string {
 	return s.location
 }
 

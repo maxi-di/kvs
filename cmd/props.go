@@ -8,14 +8,14 @@ import (
 
 type Props struct {
 	logger  *logrus.Logger
-	storage kvs.KvStorage
+	storage kvs.Storage
 }
 
 func NewProps() *Props {
 	return &Props{}
 }
 
-func InitProps(props *Props, logger *logrus.Logger, storage kvs.KvStorage) {
+func InitProps(props *Props, logger *logrus.Logger, storage kvs.Storage) {
 	props.logger = logger
 	props.storage = storage
 }

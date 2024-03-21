@@ -26,7 +26,7 @@ var (
 func main() {
 	props := cmd.NewProps()
 
-	logger = initLogger(logrus.ErrorLevel)
+	logger = initLogger(logrus.PanicLevel)
 
 	rootCmd := &cobra.Command{
 		Use: appName,
@@ -36,7 +36,14 @@ func main() {
 			if verbose {
 				logger.SetLevel(logrus.TraceLevel)
 			}
-			storage, err := kvs.NewJSONStorage(location, logger)
+			if location == "" {
+				homeDir, err := os.UserHomeDir()
+				if err != nil {
+					logger.Fatal("can't get user home dir")
+				}
+				location = path.Join(homeDir, ".local", "share", "kvs")
+			}
+			storage, err := kvs.NewFileStorage(location, logger)
 			if err != nil {
 				logger.Fatal(err)
 			}

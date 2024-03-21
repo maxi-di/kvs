@@ -7,7 +7,7 @@ type StorageRecord struct {
 
 type StorageRecords []StorageRecord
 
-type KvStorage interface {
+type Storage interface {
 	NewDB(s string) error
 	RemoveDB(s string) error
 	ListDB() []string
