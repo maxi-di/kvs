@@ -50,6 +50,12 @@ func main() {
 			}
 			cmd.InitProps(props, logger, storage)
 		},
+		PersistentPostRun: func(c *cobra.Command, args []string) {
+			if len(args) == 0 {
+				c.Help()
+				os.Exit(1)
+			}
+		},
 	}
 	rootCmd.Version = revision
 	rootCmd.PersistentFlags().StringVarP(&location, "location", "l", "", "location (path) of the storage")
