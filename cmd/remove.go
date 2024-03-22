@@ -8,8 +8,9 @@ func NewRemoveCmd(props *Props) *cobra.Command {
 	dbName := ""
 	key := ""
 	c := &cobra.Command{
-		Use:   "remove",
-		Short: "remove record from DB",
+		Use:     "remove",
+		Aliases: []string{"delete"},
+		Short:   "remove record from DB",
 		Run: func(cmd *cobra.Command, args []string) {
 			err := openDB(props.storage, dbName)
 			if err != nil {

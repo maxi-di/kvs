@@ -51,11 +51,11 @@ func fromJSON2(dbLocation string) (StorageContent, error) {
 	content := StorageContent{}
 	txt, err := os.ReadFile(dbLocation)
 	if err != nil {
-		return content, err
+		return content, errors.New("can't open db file: " + err.Error())
 	}
 	err = json.Unmarshal(txt, &content)
 	if err != nil {
-		return content, err
+		return content, errors.New("can't unmarshal db file: " + err.Error())
 	}
 	return content, nil
 }
@@ -110,7 +110,7 @@ func (s *FileStorage) Insert(key, value string, force bool) error {
 			s.content.Records[idx] = StorageRecord{Key: key, Value: value}
 			err = s.save()
 		} else {
-			err = errors.New("value exists, force not provided")
+			err = errors.New("value exists, 'force' flag not provided")
 		}
 	} else {
 		s.content.Records = append(s.content.Records, StorageRecord{Key: key, Value: value})

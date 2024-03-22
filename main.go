@@ -24,7 +24,7 @@ var (
 )
 
 func main() {
-	props := cmd.NewProps()
+	props := new(cmd.Props)
 
 	logger = initLogger(logrus.PanicLevel)
 
@@ -50,13 +50,8 @@ func main() {
 			}
 			cmd.InitProps(props, logger, storage)
 		},
-		PersistentPostRun: func(c *cobra.Command, args []string) {
-			if len(args) == 0 {
-				c.Help()
-				os.Exit(1)
-			}
-		},
 	}
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.Version = revision
 	rootCmd.PersistentFlags().StringVarP(&location, "location", "l", "", "location (path) of the storage")
 	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "verbose for logger output")

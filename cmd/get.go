@@ -2,8 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+)
+
+const (
+	newEntry = "add new entry..."
 )
 
 func NewGetCmd(props *Props) *cobra.Command {
@@ -22,6 +27,9 @@ func NewGetCmd(props *Props) *cobra.Command {
 
 			if key == "" {
 				keys := props.storage.GetKeys()
+				if with_add {
+					keys = append(keys, newEntry)
+				}
 				key, _, err = fuzzy(keys, "Choose value")
 				if err != nil {
 					props.logger.Fatal(err)
@@ -32,13 +40,36 @@ func NewGetCmd(props *Props) *cobra.Command {
 				return
 			}
 
-			value, err := props.storage.GetValue(key)
-			if err != nil {
-				props.logger.Fatal(err)
-			}
-			if value == "" {
-				props.logger.Warnf("no value for key '%s'", key)
-				return
+			var value string
+
+			if with_add && key == newEntry {
+				fmt.Println("Input key: ")
+				key, _ = readLine()
+				if key == "" {
+					props.logger.Info("interrupt")
+					os.Exit(0)
+				}
+				fmt.Println("Input value: ")
+				value, _ = readLine()
+				if value == "" {
+					props.logger.Info("interrupt")
+					os.Exit(0)
+				}
+				err := props.storage.Insert(key, value, false)
+				if err != nil {
+					props.logger.Fatal(err)
+				}
+
+			} else {
+
+				value, err = props.storage.GetValue(key)
+				if err != nil {
+					props.logger.Fatal(err)
+				}
+				if value == "" {
+					props.logger.Warnf("no value for key '%s'", key)
+					return
+				}
 			}
 			fmt.Println(value)
 		},

@@ -13,8 +13,9 @@ func NewInsertCmd(props *Props) *cobra.Command {
 	value := ""
 	force := false
 	c := &cobra.Command{
-		Use:   "insert",
-		Short: "insert Key to DB",
+		Use:     "insert",
+		Aliases: []string{"set", "push", "add"},
+		Short:   "insert Key to DB",
 		Run: func(cmd *cobra.Command, args []string) {
 			err := openDB(props.storage, dbName)
 			if err != nil {

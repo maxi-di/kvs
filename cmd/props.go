@@ -11,10 +11,6 @@ type Props struct {
 	storage kvs.Storage
 }
 
-func NewProps() *Props {
-	return &Props{}
-}
-
 func InitProps(props *Props, logger *logrus.Logger, storage kvs.Storage) {
 	props.logger = logger
 	props.storage = storage
