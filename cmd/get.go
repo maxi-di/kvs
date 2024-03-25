@@ -43,17 +43,15 @@ func NewGetCmd(props *Props) *cobra.Command {
 			var value string
 
 			if with_add && key == newEntry {
-				fmt.Println("Input key: ")
-				key, _ = readLine()
+				key, _ = readLine("Input key: ")
 				if key == "" {
 					props.logger.Info("interrupt")
-					os.Exit(0)
+					os.Exit(1)
 				}
-				fmt.Println("Input value: ")
-				value, _ = readLine()
+				value, _ = readLine("Input value: ")
 				if value == "" {
 					props.logger.Info("interrupt")
-					os.Exit(0)
+					os.Exit(1)
 				}
 				err := props.storage.Insert(key, value, false)
 				if err != nil {

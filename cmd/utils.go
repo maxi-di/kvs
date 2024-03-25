@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"kvs/kvs"
+	"os"
 
 	"github.com/chzyer/readline"
 )
@@ -34,13 +36,18 @@ func openDB(db kvs.Storage, name string) error {
 	return nil
 }
 
-func readLine() (string, error) {
+func readLine(header string) (string, error) {
+	if header != "" {
+		fmt.Fprintln(os.Stderr, header)
+	}
+
 	l, err := readline.NewEx(&readline.Config{
-		// Prompt:            "\033[31m>>\033[0m ",
-		HistoryFile:       "/tmp/rl.tmp",
+		Prompt:            "\033[31m>>\033[0m ",
+		HistoryFile:       "/tmp/kvs.history",
 		InterruptPrompt:   "^C",
 		EOFPrompt:         "exit",
 		HistorySearchFold: true,
+		Stdout:            os.Stderr,
 	})
 	if err != nil {
 		return "", err

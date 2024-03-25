@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -24,19 +23,17 @@ func NewInsertCmd(props *Props) *cobra.Command {
 			props.logger.Infof("inserting to db '%s'", dbName)
 
 			if key == "" {
-				fmt.Println("Input key: ")
-				key, _ = readLine()
+				key, _ = readLine("Input key: ")
 				if key == "" {
 					props.logger.Info("interrupt")
-					os.Exit(0)
+					os.Exit(1)
 				}
 			}
 			if value == "" {
-				fmt.Println("Input value: ")
-				value, _ = readLine()
+				value, _ = readLine("Input value: ")
 				if value == "" {
 					props.logger.Info("interrupt")
-					os.Exit(0)
+					os.Exit(1)
 				}
 			}
 
