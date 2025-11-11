@@ -1,12 +1,13 @@
 package main
 
 import (
-	"kvs/cmd"
-	"kvs/kvs"
 	"os"
 	"path"
 	"runtime"
 	"strconv"
+
+	"kvs/cmd"
+	"kvs/kvs"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -18,7 +19,7 @@ const (
 
 var (
 	logger   *logrus.Logger
-	revision = "uknown"
+	revision = "unknown"
 	verbose  = true
 	location = ""
 )
@@ -63,11 +64,13 @@ func main() {
 	rootCmd.AddCommand(cmd.NewGetCmd(props))
 	rootCmd.AddCommand(cmd.NewRemoveCmd(props))
 
-	rootCmd.Execute()
+	err := rootCmd.Execute()
+	if err != nil {
+		logger.Fatal(err)
+	}
 }
 
 func initLogger(level logrus.Level) *logrus.Logger {
-
 	logger := logrus.New()
 	logger.SetOutput(os.Stderr)
 	logger.ReportCaller = true
