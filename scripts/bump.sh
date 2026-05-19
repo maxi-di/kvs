@@ -17,18 +17,15 @@ usage() {
     echo "Usage: $0 <command>"
     echo ""
     echo "Commands:"
-    echo "  major            1.2.3 -> 2.0.0"
-    echo "  minor            1.2.3 -> 1.3.0"
-    echo "  patch            1.2.3 -> 1.2.4"
-    echo "  pre <label>      1.2.3 -> 1.2.3-rc1  (или rc2 если rc уже есть)"
-    echo "  pre <label> bump 1.2.3-rc1 -> 1.2.3-rc2"
-    echo "  release          1.2.3-rc2 -> 1.2.3  (снять prerelease)"
-    echo ""
-    echo "Examples:"
-    echo "  $0 minor"
-    echo "  $0 pre rc"
-    echo "  $0 pre rc bump"
-    echo "  $0 release"
+    echo "  major                        1.2.3      -> 2.0.0"
+    echo "  minor                        1.2.3      -> 1.3.0"
+    echo "  patch                        1.2.3      -> 1.2.4"
+    echo "  pre <label> [major|minor|patch]"
+    echo "                               1.2.3      -> 1.2.4-rc1    (patch по умолчанию)"
+    echo "                               1.2.3      -> 1.3.0-rc1    (minor)"
+    echo "                               1.2.3      -> 2.0.0-rc1    (major)"
+    echo "  pre <label> bump             1.2.4-rc1  -> 1.2.4-rc2"
+    echo "  release                      1.2.4-rc2  -> 1.2.4"
     exit 1
 }
 
@@ -66,17 +63,30 @@ patch)
     NEW="${MAJOR}.${MINOR}.$((PATCH + 1))"
     ;;
 pre)
+    # ./bump.sh pre <label> [major|minor|patch] [bump]
     [ -z "$2" ] && usage
+
     LABEL="$2"
-    if [ "$3" = "bump" ]; then
-        # bump существующего prerelease
+    BUMP_PART="${3:-patch}"
+
+    if [ "$3" = "bump" ] || [ "$4" = "bump" ]; then
         NEW=$(bump_pre "$LABEL")
     else
-        # новый prerelease — сначала поднимаем patch если нет prerelease
-        if [ -z "$PRE" ]; then
-            BASE="${MAJOR}.${MINOR}.$((PATCH + 1))"
+        case "$BUMP_PART" in
+        major) BASE="$((MAJOR + 1)).0.0" ;;
+        minor) BASE="${MAJOR}.$((MINOR + 1)).0" ;;
+        patch) BASE="${MAJOR}.${MINOR}.$((PATCH + 1))" ;;
+        *)
+            echo "Неизвестная часть версии: $BUMP_PART"
+            usage
+            ;;
+        esac
+
+        if [ -n "$PRE" ]; then
+            NEW=$(bump_pre "$LABEL")
+        else
+            NEW="${BASE}-${LABEL}1"
         fi
-        NEW="${BASE}-${LABEL}1"
     fi
     ;;
 release)
