@@ -1,11 +1,12 @@
 B = $(shell git rev-parse --abbrev-ref HEAD)
 BRANCH = $(subst /,-,$(B))
 GITREV = $(shell git describe --abbrev=7 --always --tags --dirty)
-REV = $(GITREV)-$(BRANCH)-$(shell date +%Y%m%d-%H:%M:%S)
+FULLREV = $(GITREV)-$(BRANCH)-$(shell date +%Y%m%d-%H:%M:%S)
+VERSION = $(shell cat VERSION)
 
 BIN_NAME = kvs
 
-LDFLAGS = "-X main.revision=$(REV) -s -w"
+LDFLAGS = "-X main.fullrev=$(FULLREV) -X main.version=$(VERSION) -s -w"
 
 all: native
 

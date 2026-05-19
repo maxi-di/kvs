@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path"
 	"runtime"
@@ -19,7 +20,8 @@ const (
 
 var (
 	logger   *logrus.Logger
-	revision = "unknown"
+	fullrev  = "unknown"
+	version  = "unknown"
 	verbose  = true
 	location = ""
 )
@@ -53,7 +55,7 @@ func main() {
 		},
 	}
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
-	rootCmd.Version = revision
+	rootCmd.Version = fmt.Sprintf("%s (git: %s)", version, fullrev)
 	rootCmd.PersistentFlags().StringVarP(&location, "location", "l", "", "location (path) of the storage")
 	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "verbose for logger output")
 
