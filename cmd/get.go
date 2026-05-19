@@ -43,12 +43,12 @@ func NewGetCmd(props *Props) *cobra.Command {
 			var value string
 
 			if with_add && key == newEntry {
-				key, _ = readLine("Input key: ")
+				key, _ = readLine("Input key: ", "")
 				if key == "" {
 					props.logger.Info("interrupt")
 					os.Exit(1)
 				}
-				value, _ = readLine("Input value: ")
+				value, _ = readLine("Input value: ", "")
 				if value == "" {
 					props.logger.Info("interrupt")
 					os.Exit(1)

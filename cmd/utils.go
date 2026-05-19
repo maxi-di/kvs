@@ -3,14 +3,14 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"kvs/kvs"
 	"os"
+
+	"kvs/kvs"
 
 	"github.com/chzyer/readline"
 )
 
 func openDB(db kvs.Storage, name string) error {
-
 	var err error
 
 	if name == "" {
@@ -36,7 +36,7 @@ func openDB(db kvs.Storage, name string) error {
 	return nil
 }
 
-func readLine(header string) (string, error) {
+func readLine(header string, initial string) (string, error) {
 	if header != "" {
 		fmt.Fprintln(os.Stderr, header)
 	}
@@ -51,6 +51,10 @@ func readLine(header string) (string, error) {
 	})
 	if err != nil {
 		return "", err
+	}
+
+	if initial != "" {
+		l.Operation.SetBuffer(initial)
 	}
 
 	defer l.Close()
